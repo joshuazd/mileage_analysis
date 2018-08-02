@@ -6,7 +6,7 @@ import datetime
 
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
 SPREADSHEET_ID = '1x2Tmj_is1Rqp43LaTU8lHYl77qS3huiaiz9fWcfcJgA'
-SAMPLE_RANGE_NAME = 'Sheet1!A1:D'
+RANGE_NAME = 'Sheet1!A1:D'
 
 
 def main():
@@ -21,7 +21,7 @@ def main():
     # Call the Sheets API
     result = service.spreadsheets().values().get(
             spreadsheetId=SPREADSHEET_ID,
-            range=SAMPLE_RANGE_NAME).execute()
+            range=RANGE_NAME).execute()
     values = result.get('values', [])
     if not values:
         print('No data found.')
