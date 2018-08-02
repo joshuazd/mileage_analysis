@@ -1,7 +1,7 @@
 from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file as oauth_file, client, tools
-from matplotlib import pyplot
+from matplotlib import pyplot as plt
 import datetime
 
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
@@ -65,10 +65,10 @@ def main():
         points['x'].append(datetime.date(int(year), int(month), int(day)))
     points['y'] = [raw[date]['miles'] / raw[date]['gallons'] for date in raw]
 
-    pyplot.scatter(points['x'], points['y'])
-    pyplot.axis(ymin=20, ymax=80)
-    pyplot.yticks(range(20, 80, 10))
-    pyplot.show()
+    plt.scatter(points['x'], points['y'])
+    plt.axis(ymin=20, ymax=80)
+    plt.yticks(range(20, 80, 10))
+    plt.show()
 
 if __name__ == "__main__":
     main()
