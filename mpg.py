@@ -68,6 +68,8 @@ def main():
     plt.scatter(points['x'], points['y'])
     plt.axis(ymin=20, ymax=80)
     plt.yticks(range(20, 80, 10))
+    plt.minorticks_on()
+    plt.grid(b=True, which='both', axis='both')
     plt.show()
 
 if __name__ == "__main__":
