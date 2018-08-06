@@ -31,6 +31,7 @@ def main():
     headers = values[0]
     values = values[1:]
 
+    # Build data array
     data = {}
     for value in values:
         if value[0] not in data:
@@ -40,6 +41,7 @@ def main():
             entry[headers[index]] = field
         data[value[0]] += [entry]
 
+    # Get totals of miles and gallons for each day
     raw = {}
     for date in data:
         data[date] = [
