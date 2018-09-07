@@ -2,6 +2,9 @@ from apiclient.discovery import build
 from httplib2 import Http
 from oauth2client import file as oauth_file, client, tools
 from matplotlib import pyplot as plt
+from sklearn import linear_model
+from sklearn.metrics import mean_squared_error
+# from random import shuffle
 import numpy as np
 import sys
 import datetime
@@ -49,6 +52,68 @@ def main(argv):
         mileage_vs_ride_length(data)
     elif argv[1] == 'mot':
         mileage_over_time(data)
+    elif argv[1] == 'ls':
+        least_squares(data)
+
+
+def least_squares(data):
+    data = list(([float(r['Distance (mi)']), float(r['Length (min)']), day],
+                float(r['MPG'])) for day in data for r in data[day])
+    X, y = zip(*data)
+
+    for x in X:
+        month, day, year = x[2].split('-')
+        date = datetime.date(int(year), int(month), int(day))
+        x[2] = date.timetuple().tm_yday
+
+    X_train, X_test = X[:-20], X[-20:]
+    y_train, y_test = y[:-20], y[-20:]
+
+    reg = linear_model.LinearRegression()
+    reg.fit(X_train, y_train)
+    y_pred = reg.predict(X_test)
+
+    print('All features',
+          mean_squared_error(y_test, y_pred),
+          reg.score(X_test, y_test))
+
+    dist_train = list(x_train[0] for x_train in X_train)
+    dist_train = np.reshape(dist_train, (-1, 1))
+    dist_test = list([x_test[0]] for x_test in X_test)
+    dist_test = np.reshape(dist_test, (-1, 1))
+    length_train = list(x_train[1] for x_train in X_train)
+    length_train = np.reshape(length_train, (-1, 1))
+    length_test = list(x_test[1] for x_test in X_test)
+    length_test = np.reshape(length_test, (-1, 1))
+
+    reg = linear_model.LinearRegression()
+    reg.fit(dist_train, y_train)
+    y_pred = reg.predict(dist_test)
+    mse = mean_squared_error(y_test, y_pred)
+    score = reg.score(dist_test, y_test)
+
+    print('Distance', mse, score)
+
+    plt.subplot(1, 2, 1)
+    plt.scatter(dist_test, y_test, color='black')
+    plt.plot(dist_test, y_pred, color='blue', linewidth=3)
+    plt.title('Distance')
+    plt.text(5, 30, 'score=%f' % score)
+
+    reg = linear_model.LinearRegression()
+    reg.fit(length_train, y_train)
+    y_pred = reg.predict(length_test)
+    mse = mean_squared_error(y_test, y_pred)
+    score = reg.score(length_test, y_test)
+
+    print('Length', mse, score)
+
+    plt.subplot(1, 2, 2)
+    plt.scatter(length_test, y_test, color='black')
+    plt.plot(length_test, y_pred, color='blue', linewidth=3)
+    plt.title('Length')
+    plt.text(5, 30, 'score=%f' % score)
+    plt.show()
 
 
 def mileage_vs_ride_time(data):
